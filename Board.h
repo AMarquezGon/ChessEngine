@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <array>
 #include "settings.h"
+#include <list>
 
 class Board
 {
@@ -41,6 +42,8 @@ public:
 	void setBit(Piece piece, Color color, int file, int rank);
 	bool getBit(Piece piece, Color color, int file, int rank);
 	void clearBit(Piece piece, Color color, int file, int rank);
+	BitBoard getPieces(Color color);
+	std::list<Board> nextPossiblePositions(Color color);
 	Board();
 
 };
