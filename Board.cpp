@@ -1,5 +1,7 @@
 #include "Board.h"
 #include "settings.h"
+#include <iostream>
+#include <bitset>
 
 using BitBoard = std::uint64_t;
 
@@ -55,22 +57,29 @@ std::list<Board> Board::nextPossiblePositions(Color color)
 	{
 		while (myPawns)
 		{
-			BitBoard currentPawn = myPawns & -myPawns;
-			if (~((currentPawn << 8) & allPieces))
+			BitBoard currentPawn = myPawns & (~myPawns + 1);
+			if (!((currentPawn << 8) & allPieces))
 			{
 				Board newPosition{ *this };
 				newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 8;
 				possiblePositions.push_back(newPosition);
 			}
 
-			if(currentPawn<<7&blackPieces && ((currentPawn-1)&7))
+			if (currentPawn & constants::RANK_2 && !((currentPawn << 8) & allPieces) && !((currentPawn << 16) & allPieces))
+			{
+				Board newPosition{ *this };
+				newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 16;
+				possiblePositions.push_back(newPosition);
+			}
+
+			if((currentPawn<<7&blackPieces) && (currentPawn & (~constants::FILE_A)))
 			{
 				Board newPosition{ *this };
 				newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 7;
 				possiblePositions.push_back(newPosition);
 			}
 
-			if (currentPawn << 9 & blackPieces && (currentPawn & 7))
+			if ((currentPawn<<9 & blackPieces) && (currentPawn & (~constants::FILE_H)))
 			{
 				Board newPosition{ *this };
 				newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 9;

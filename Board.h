@@ -6,7 +6,7 @@
 
 class Board
 {
-private:
+public:
 	using BitBoard = std::uint64_t;
 	std::array<BitBoard, 12> m_pieces{};
 
