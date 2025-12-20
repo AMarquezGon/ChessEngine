@@ -1,5 +1,6 @@
 #include "Board.h"
 #include "settings.h"
+#include "utility.h"
 #include <iostream>
 #include <bitset>
 
@@ -8,22 +9,28 @@ using BitBoard = std::uint64_t;
 Board::Board()
 {
 	m_pieces[pawn + max_pieces * white] = constants::RANK_2;
-	m_pieces[pawn + max_pieces * black] = constants::RANK_6;
+	m_pieces[pawn + max_pieces * black] = constants::RANK_7;
 
 	m_pieces[knight + max_pieces * white] = constants::RANK_1 & (constants::FILE_B | constants::FILE_G) ;
-	m_pieces[knight + max_pieces * black] = constants::RANK_7 & (constants::FILE_B | constants::FILE_G);
+	m_pieces[knight + max_pieces * black] = constants::RANK_8 & (constants::FILE_B | constants::FILE_G);
 
 	m_pieces[bishop + max_pieces * white] = constants::RANK_1 & (constants::FILE_C | constants::FILE_F);
-	m_pieces[bishop + max_pieces * black] = constants::RANK_7 & (constants::FILE_C | constants::FILE_F);
+	m_pieces[bishop + max_pieces * black] = constants::RANK_8 & (constants::FILE_C | constants::FILE_F);
 
 	m_pieces[rook + max_pieces * white] = constants::RANK_1 & (constants::FILE_A | constants::FILE_H);
-	m_pieces[rook + max_pieces * black] = constants::RANK_7 & (constants::FILE_A | constants::FILE_H);
+	m_pieces[rook + max_pieces * black] = constants::RANK_8 & (constants::FILE_A | constants::FILE_H);
 
 	m_pieces[queen + max_pieces * white] = constants::RANK_1 & constants::FILE_D;
-	m_pieces[queen + max_pieces * black] = constants::RANK_7 & constants::FILE_D;
+	m_pieces[queen + max_pieces * black] = constants::RANK_8 & constants::FILE_D;
 
 	m_pieces[king + max_pieces * white] = constants::RANK_1 & constants::FILE_E;
-	m_pieces[king + max_pieces * black] = constants::RANK_7 & constants::FILE_E;
+	m_pieces[king + max_pieces * black] = constants::RANK_8 & constants::FILE_E;
+}
+
+Board::Board(const Board& board)
+{
+	m_pieces = board.m_pieces;
+	m_enpassant = 0;
 }
 
 void Board::setBit(Piece piece,Color color, int file, int rank)
@@ -69,6 +76,7 @@ std::list<Board> Board::nextPossiblePositions(Color color)
 			{
 				Board newPosition{ *this };
 				newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 16;
+				newPosition.m_enpassant = currentPawn >> 8;
 				possiblePositions.push_back(newPosition);
 			}
 
@@ -86,9 +94,51 @@ std::list<Board> Board::nextPossiblePositions(Color color)
 				possiblePositions.push_back(newPosition);
 			}
 
+			if ((currentPawn & constants::RANK_5) && m_enpassant)
+			{
+				if ((m_enpassant == (currentPawn >> 31)) && (currentPawn & (~constants::FILE_H)))
+				{
+					Board newPosition{ *this };
+					newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 9;
+					possiblePositions.push_back(newPosition);
+				}
+
+				if ((m_enpassant == (currentPawn >> 33)) && (currentPawn & (~constants::FILE_A)))
+				{
+					Board newPosition{ *this };
+					newPosition.m_pieces[pawn + max_pieces * white] = (newPosition.m_pieces[pawn + max_pieces * white] & (~currentPawn)) | currentPawn << 7;
+					possiblePositions.push_back(newPosition);
+				}
+			}
+
 			myPawns &= myPawns - 1;
 		}
 	}
 	return possiblePositions;
 
+}
+
+void Board::display()
+{
+	for (int rank{ 7 }; rank > -1; --rank)
+	{
+		for (int file{ 0 }; file < 8; ++file)
+		{
+			bool found{ false };
+			int piece{};
+			for (const auto& map : m_pieces)
+			{
+				if (1ULL << (file + rank * 8) & map)
+				{
+					std::cout << indexToChar[piece] << ' ';
+					found = true;
+					break;
+				}
+				++piece;
+			}
+			if (!found)
+				std::cout << "0 ";
+		}
+		std::cout << '\n';
+	}
 }

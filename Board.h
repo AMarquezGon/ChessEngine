@@ -9,6 +9,8 @@ class Board
 public:
 	using BitBoard = std::uint64_t;
 	std::array<BitBoard, 12> m_pieces{};
+	std::uint8_t m_enpassant{};
+	std::array<char, 12> indexToChar{ 'P','N','B','R','Q','K','p','n','b','r','q','k' };
 
 public:
 	enum File
@@ -45,6 +47,9 @@ public:
 	BitBoard getPieces(Color color);
 	std::list<Board> nextPossiblePositions(Color color);
 	Board();
+	Board(const Board& board);
+	std::array<BitBoard, 12> getBitBoards() { return m_pieces; }
+	void display();
 
 };
 
