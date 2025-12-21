@@ -20,4 +20,5 @@ namespace constants
 	constexpr std::uint64_t FILE_F = 0x2020202020202020ULL;
 	constexpr std::uint64_t FILE_G = 0x4040404040404040ULL;
 	constexpr std::uint64_t FILE_H = 0x8080808080808080ULL;
+
 }
