@@ -9,7 +9,9 @@ bool PositionCalculator::positionSeen(const Board& board)
 void PositionCalculator::addPosition(const Board& board, std::list<Board>& positions)
 {
 	if (positionSeen(board) || !isKingSafe(board))
+	{
 		return;
+	}
 	positions.push_back(board);
 	m_transposedPositions.insert(board);
 }
@@ -315,7 +317,6 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			Board newPosition{ board, 0 };
 			newPosition.m_pieces[Board::rook + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::rook + Board::max_pieces * board.m_currentTurn] & (~currentRook)) | newRook;
 			addPosition(newPosition, possiblePositions);
-			std::cout << '\n';
 			if (newRook & constants::RANK_8)
 			{
 				break;
@@ -401,8 +402,300 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 		myRooks &= myRooks - 1;
 	}
 
-	return possiblePositions;
+	BitBoard myQueens{ board.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] };
 
+	while (myQueens)
+	{
+		BitBoard currentQueen = myQueens & (~myQueens + 1);
+
+		int jump{ 1 };
+		while (true) // top
+		{
+			BitBoard newQueen{ currentQueen << (8 * jump) };
+			if (newQueen & myPieces || currentQueen & constants::RANK_8)
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & constants::RANK_8)
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // bottom
+		{
+			BitBoard newQueen{ currentQueen >> (8 * jump) };
+			if (newQueen & myPieces || currentQueen & constants::RANK_1)
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & constants::RANK_1)
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // right
+		{
+			BitBoard newQueen{ currentQueen << jump };
+			if (newQueen & myPieces || currentQueen & constants::FILE_H)
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & constants::FILE_H)
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // left
+		{
+			BitBoard newQueen{ currentQueen >> jump };
+			if (newQueen & myPieces || currentQueen & constants::FILE_A)
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & constants::FILE_A)
+			{
+				break;
+			}
+			++jump;
+		}
+
+		jump = 1;
+		while (true) // diagonal top right
+		{
+			BitBoard newQueen{ currentQueen << (9 * jump) };
+			if (newQueen & myPieces || currentQueen & (constants::RANK_8 | constants::FILE_H))
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & (constants::RANK_8 | constants::FILE_H))
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // diagonal top left
+		{
+			BitBoard newQueen{ currentQueen << (7 * jump) };
+			if (newQueen & myPieces || currentQueen & (constants::RANK_8 | constants::FILE_A))
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & (constants::RANK_8 | constants::FILE_A))
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // diagonal bottom right
+		{
+			BitBoard newQueen{ currentQueen >> (7 * jump) };
+			if (newQueen & myPieces || currentQueen & (constants::RANK_1 | constants::FILE_H))
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & (constants::RANK_1 | constants::FILE_H))
+			{
+				break;
+			}
+			++jump;
+		}
+		jump = 1;
+		while (true) // diagonal bottom right
+		{
+			BitBoard newQueen{ currentQueen >> (9 * jump) };
+			if (newQueen & myPieces || currentQueen & (constants::RANK_1 | constants::FILE_A))
+			{
+				break;
+			}
+			else if (newQueen & enemyPieces)
+			{
+				Board newPosition{ board, 0 };
+				newPosition.eliminatePiece(newQueen);
+				newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+				addPosition(newPosition, possiblePositions);
+				break;
+			}
+			Board newPosition{ board, 0 };
+			newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::queen + Board::max_pieces * board.m_currentTurn] & (~currentQueen)) | newQueen;
+			addPosition(newPosition, possiblePositions);
+			if (newQueen & (constants::RANK_1 | constants::FILE_A))
+			{
+				break;
+			}
+			++jump;
+		}
+
+		myQueens &= myQueens - 1;
+	}
+
+	BitBoard myKing{ board.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] };
+
+	//top check
+	BitBoard newKing{ myKing << 8 };
+	if (myKing & ~constants::RANK_8 && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+
+	}
+	 //bottom check
+	newKing = myKing >> 8;
+	if (myKing & ~constants::RANK_1 && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+
+	}
+	//left check
+	newKing = myKing >> 1;
+	if (myKing & ~constants::FILE_A && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+
+	}
+	//right check
+	newKing = myKing << 1;
+	if (myKing & ~constants::FILE_H && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+
+	}
+
+	//top right check
+	newKing= myKing << 9;
+	if (myKing & ~constants::RANK_8 & ~constants::FILE_H && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+	}
+	//bottom left check
+	newKing = myKing >> 9;
+	if (myKing & ~constants::RANK_1 & ~constants::FILE_A && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+
+	}
+	//top left check
+	newKing = myKing << 7;
+	if (myKing & ~constants::FILE_A & ~constants::RANK_8 && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+	}
+	//bottom right check
+	newKing = myKing >> 7;
+	if (myKing & ~constants::FILE_H & ~constants::RANK_1 && newKing & ~myPieces)
+	{
+		Board newPosition{ board, 0 };
+		newPosition.eliminatePiece(newKing);
+		newPosition.m_pieces[Board::king + Board::max_pieces * board.m_currentTurn] = newKing;
+		addPosition(newPosition, possiblePositions);
+	}
+
+
+	return possiblePositions;
 }
 
 bool PositionCalculator::isKingSafe(const Board& board)
