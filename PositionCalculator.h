@@ -32,6 +32,6 @@ public:
     std::list<Board> nextPossiblePositions(Board board);
     void addPosition(const Board& board, std::list<Board>& positions);
     bool positionSeen(const Board& board);
-    bool kingSafe(const Board& board);
+    bool isKingSafe(const Board& board);
 };
 

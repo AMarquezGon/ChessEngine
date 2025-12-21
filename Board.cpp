@@ -42,12 +42,12 @@ void Board::clearBit(Piece piece, Color color, int file, int rank)
 	m_pieces[piece + max_pieces * color] &= ~(1ULL << ((file - 1) + (rank - 1) * 8));
 }
 
-BitBoard Board::getPieces(Color color)
+BitBoard Board::getPieces(Color color) const
 {
 	return { m_pieces[pawn + max_pieces * color] | m_pieces[knight + max_pieces * color] | m_pieces[bishop + max_pieces * color] | m_pieces[rook + max_pieces * color] | m_pieces[king + max_pieces * color] | m_pieces[queen + max_pieces * color] };
 }
 
-void Board::display()
+void Board::display() const
 {
 	for (int rank{ 7 }; rank > -1; --rank)
 	{

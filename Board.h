@@ -54,18 +54,15 @@ public:
 	{
 		m_currentTurn = (board.m_currentTurn == white ? black : white);
 	}
-	std::array<BitBoard, 12> getBitBoards() { return m_pieces; }
-	void display();
+	std::array<BitBoard, 12> getBitBoards() const { return m_pieces; }
+	void display() const;
 	void eliminatePiece(BitBoard position);
 	Color getCurrentTurn() { return m_currentTurn; }
 	void setBit(Piece piece, Color color, int file, int rank);
 	bool getBit(Piece piece, Color color, int file, int rank);
 	void clearBit(Piece piece, Color color, int file, int rank);
-	BitBoard getPieces(Color color);
-	std::list<Board> nextPossiblePositions();
+	BitBoard getPieces(Color color) const;
 	bool operator==(const Board& other) const;
-	
-	
 
 public:
 	Color m_currentTurn{};

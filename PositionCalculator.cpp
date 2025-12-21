@@ -8,7 +8,7 @@ bool PositionCalculator::positionSeen(const Board& board)
 
 void PositionCalculator::addPosition(const Board& board, std::list<Board>& positions)
 {
-	if (positionSeen(board))
+	if (positionSeen(board) || !isKingSafe(board))
 		return;
 	positions.push_back(board);
 	m_transposedPositions.insert(board);
@@ -230,7 +230,6 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			Board newPosition{ board, 0 };
 			newPosition.m_pieces[Board::bishop + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::bishop + Board::max_pieces * board.m_currentTurn] & (~currentBishop)) | newBishop;
 			addPosition(newPosition, possiblePositions);
-			newPosition.display();
 			if (newBishop & (constants::RANK_8 | constants::FILE_A))
 			{
 				break;
@@ -316,7 +315,6 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			Board newPosition{ board, 0 };
 			newPosition.m_pieces[Board::rook + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::rook + Board::max_pieces * board.m_currentTurn] & (~currentRook)) | newRook;
 			addPosition(newPosition, possiblePositions);
-			newPosition.display();
 			std::cout << '\n';
 			if (newRook & constants::RANK_8)
 			{
@@ -407,7 +405,308 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 
 }
 
-bool PositionCalculator::kingSafe(const Board& board)
+bool PositionCalculator::isKingSafe(const Board& board)
 {
+	using BitBoard = std::uint64_t;
+	BitBoard myKing{ board.m_pieces[Board::king + oppositeColor(board.m_currentTurn) * Board::max_pieces] };
+	BitBoard myPieces{ board.getPieces(oppositeColor(board.m_currentTurn)) };
+	BitBoard enemyPieces{ board.getPieces(board.m_currentTurn) };
+	BitBoard enemyRooks{ board.m_pieces[Board::rook + board.m_currentTurn * Board::max_pieces] };
+	BitBoard enemyQueens{ board.m_pieces[Board::queen + board.m_currentTurn * Board::max_pieces] };
+	BitBoard enemyBishops{  board.m_pieces[Board::bishop + board.m_currentTurn * Board::max_pieces] }; 
+	BitBoard enemyKnights{ board.m_pieces[Board::knight + board.m_currentTurn * Board::max_pieces] };
+	BitBoard enemyPawns{ board.m_pieces[Board::pawn + board.m_currentTurn * Board::max_pieces] };
+	BitBoard enemyKing{ board.m_pieces[Board::king + board.m_currentTurn * Board::max_pieces] };
 
+	//top check
+	BitBoard squareCheck{ myKing << 8 };
+	if (myKing & (~constants::RANK_8))
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyRooks))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & constants::RANK_8)
+			{
+				break;
+			}
+			squareCheck <<= 8;
+		}
+	}
+
+	//Bottom check
+	squareCheck = myKing >> 8;
+	if (myKing & (~constants::RANK_1))
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyRooks))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & constants::RANK_1)
+			{
+				break;
+			}
+			squareCheck >>= 8;
+		}
+	}
+
+	//Right check
+	squareCheck = myKing << 1;
+	if (myKing & (~constants::FILE_H))
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyRooks))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & constants::FILE_H)
+			{
+				break;
+			}
+			squareCheck <<= 1;
+		}
+	}
+
+	//Left check
+	squareCheck = myKing >> 1;
+	if (myKing & (~constants::FILE_A))
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyRooks))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & constants::FILE_A)
+			{
+				break;
+			}
+			squareCheck >>= 1;
+		}
+	}
+
+	//top right check
+	squareCheck = myKing << 9;
+	bool firstSquare{ true };
+	if (myKing & ~constants::RANK_8 & ~constants::FILE_H)
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyBishops))
+				{
+					return false;
+				}
+				else if (firstSquare && (squareCheck & enemyPawns) && (board.m_currentTurn == Board::black))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & (constants::RANK_8 | constants::FILE_H))
+			{
+				break;
+			}
+			firstSquare = false;
+			squareCheck <<= 9;
+		}
+	}
+
+	//top left check
+	squareCheck = myKing << 7;
+	firstSquare = true;
+	if (myKing & ~constants::RANK_8 & ~constants::FILE_A)
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyBishops))
+				{
+					return false;
+				}
+				else if (firstSquare && (squareCheck & enemyPawns) && (board.m_currentTurn == Board::black))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & (constants::RANK_8 | constants::FILE_A))
+			{
+				break;
+			}
+			firstSquare = false;
+			squareCheck <<= 7;
+		}
+	}
+
+	//bottom right check
+	squareCheck = myKing >> 7;
+	firstSquare = true;
+	if (myKing & ~constants::RANK_1 & ~constants::FILE_H)
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyBishops))
+				{
+					return false;
+				}
+				else if (firstSquare && (squareCheck & enemyPawns) && (board.m_currentTurn == Board::white))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & (constants::RANK_1 | constants::FILE_H))
+			{
+				break;
+			}
+			firstSquare = false;
+			squareCheck >>= 7;
+		}
+	}
+
+	//bottom left check
+	squareCheck = myKing >> 9;
+	firstSquare = true;
+	if (myKing & ~constants::RANK_1 & ~constants::FILE_A)
+	{
+		while (true)
+		{
+			if (squareCheck & myPieces)
+			{
+				break;
+			}
+			if (squareCheck & enemyPieces)
+			{
+				if (squareCheck & (enemyKing | enemyQueens | enemyBishops))
+				{
+					return false;
+				}
+				else if (firstSquare && (squareCheck & enemyPawns) && (board.m_currentTurn == Board::white))
+				{
+					return false;
+				}
+				else
+				{
+					break;
+				}
+			}
+			if (squareCheck & (constants::RANK_1 | constants::FILE_A))
+			{
+				break;
+			}
+			firstSquare = false;
+			squareCheck >>= 9;
+		}
+	}
+
+	//knight checks
+	if ((myKing & ~(constants::RANK_7 | constants::RANK_8) & ~constants::FILE_H) && ((myKing<< 17) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_7 | constants::RANK_8) & ~constants::FILE_A) && ((myKing << 15) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_1 | constants::RANK_2) & ~constants::FILE_H) && ((myKing >> 15) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_1 | constants::RANK_2) & ~constants::FILE_A) && ((myKing >> 17) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_8) & ~(constants::FILE_G | constants::FILE_H)) && ((myKing << 10) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_1) & ~(constants::FILE_G | constants::FILE_H)) && ((myKing >> 6) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_1) & ~(constants::FILE_A | constants::FILE_B)) && ((myKing >> 10) & enemyKnights))
+	{
+		return false;
+	}
+	if ((myKing & ~(constants::RANK_8) & ~(constants::FILE_A | constants::FILE_B)) && ((myKing << 6) & enemyKnights))
+	{
+		return false;
+	}
+
+	return true;
 }
