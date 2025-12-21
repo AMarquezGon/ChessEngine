@@ -1,0 +1,23 @@
+Package: vcpkg-cmake-config
+Version: 2024-05-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 1ac01f313aad8442ecf52b5af5a51f57df3141490877e6eb8e26ebb81a3651b7
+Status: install ok installed
+
+Package: vcpkg-cmake
+Version: 2024-04-23
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 2c5520ffa95beec3f664610f93347e89882f1c9b30d950c67dc4d662df982142
+Status: install ok installed
+
+Package: xxhash
+Version: 0.8.3
+Depends: vcpkg-cmake, vcpkg-cmake-config
+Architecture: x64-windows
+Multi-Arch: same
+Abi: 74502cd837366bf8487a0b1a0425aec22d2748f993fa405130ff434950e9b058
+Description: Extremely fast hash algorithm
+Status: install ok installed
+

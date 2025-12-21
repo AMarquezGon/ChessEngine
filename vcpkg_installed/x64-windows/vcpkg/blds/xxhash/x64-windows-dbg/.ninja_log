@@ -1,0 +1,5 @@
+# ninja log v6
+4	62	7880170262775118	CMakeFiles/xxhash.dir/C_/Git/ChessEngine/vcpkg_installed/x64-windows/vcpkg/blds/xxhash/src/v0.8.3-852089fcb7.clean/xxhash.c.obj	dcebc20c5e66d953
+67	221	7880170264778925	xxhash.dll	f82985ebcdcac947
+67	221	7880170264778925	xxhash.lib	f82985ebcdcac947
+221	286	7880170264941283	CMakeFiles/install.util	d8257d7bebadad02

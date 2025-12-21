@@ -14,17 +14,17 @@ constexpr Board::Color oppositeColor(Board::Color color)
     return color == Board::white ? Board::black : Board::white;
 }
 
-std::uint64_t shift(std::uint64_t value, std::uint8_t shift, Board::Color color)
+constexpr std::uint64_t shift(std::uint64_t value, std::uint8_t shift, Board::Color color)
 {
     return color == Board::white ? value << shift : value >> shift;
 }
 
-std::uint64_t enpassantCheckRight(std::uint64_t value, Board::Color color)
+constexpr std::uint64_t enpassantCheckRight(std::uint64_t value, Board::Color color)
 {
     return color == Board::white ? value >> 31 : value >> 23;
 }
 
-std::uint64_t enpassantCheckLeft(std::uint64_t value, Board::Color color)
+constexpr std::uint64_t enpassantCheckLeft(std::uint64_t value, Board::Color color)
 {
     return color == Board::white ? value >> 33 : value >> 25;
 }

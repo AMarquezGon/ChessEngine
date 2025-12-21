@@ -1,0 +1,9 @@
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/xxhash.lib
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/bin/xxhash.dll
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/include/xxhash.h
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/include/xxh3.h
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/cmake/xxHash/xxHashConfig.cmake
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/cmake/xxHash/xxHashConfigVersion.cmake
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/cmake/xxHash/xxHashTargets.cmake
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/cmake/xxHash/xxHashTargets-release.cmake
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/pkgs/xxhash_x64-windows/lib/pkgconfig/libxxhash.pc

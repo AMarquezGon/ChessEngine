@@ -1,0 +1,8 @@
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/xxhash.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/package.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/package_source.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/edit_cache.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/rebuild_cache.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/list_install_components.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/install.dir
+C:/Git/ChessEngine/vcpkg_installed/vcpkg/blds/xxhash/x64-windows-dbg/CMakeFiles/install/local.dir

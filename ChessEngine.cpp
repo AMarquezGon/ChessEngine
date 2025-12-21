@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Board.h"
+#include "PositionCalculator.h"
 
-
-std::list<Board> afterNMoves(Board board, int n)
+std::list<Board> afterNMoves(Board board, int n, PositionCalculator& posCal)
 {
     std::list<Board> currentPositions{ board };
     for (int i{ 0 }; i < n; ++i)
@@ -10,7 +10,7 @@ std::list<Board> afterNMoves(Board board, int n)
         std::list<Board> nextPositions{};
         while (!currentPositions.empty())
         {
-            std::list<Board> futurePosition{ currentPositions.front().nextPossiblePositions() };
+            std::list<Board> futurePosition{ posCal.nextPossiblePositions(currentPositions.front()) };
             nextPositions.insert(nextPositions.end(), futurePosition.begin(), futurePosition.end());
             currentPositions.pop_front();
         }
@@ -27,29 +27,18 @@ int main()
     //b.m_pieces[Board::pawn + Board::max_pieces] = 1ULL << 36;
     //b.m_enpassant = 1 << 4;
     b.display();
+    PositionCalculator posCal{};
     std::cout << '\n';
     //std::list<Board> possiblePositions{b.nextPossiblePositions()};
-    std::list<Board> possiblePositions{afterNMoves(b,3)};
+    std::list<Board> possiblePositions{afterNMoves(b,3,posCal)};
     int it{ 1 };
-
-    /*for (Board board : possiblePositions)
-    {
-        std::list<Board> nextpossiblePositions{ board.nextPossiblePositions() };
-        for (Board board : nextpossiblePositions)
-        {
-            std::cout << "Board number " << it << '\n';
-            board.display();
-            ++it;
-            std::cout << "\n\n";
-        }
-    }*/
     std::cout << "Done";
-    for (Board board : possiblePositions)
-    {
-        //std::cout << board.getCurrentTurn();
-        std::cout << "Board number " << it << '\n';
-        board.display();
-        ++it;
-        std::cout << "\n\n";
-    }
+    //for (Board board : possiblePositions)
+    //{
+    //    //std::cout << board.getCurrentTurn();
+    //    std::cout << "Board number " << it << '\n';
+    //    board.display();
+    //    ++it;
+    //    std::cout << "\n\n";
+    //}
 }
