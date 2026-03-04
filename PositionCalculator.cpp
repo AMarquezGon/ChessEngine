@@ -56,7 +56,7 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			addPosition(newPosition, possiblePositions);
 		}
 
-		if ((shift(currentPawn, 7, board.m_currentTurn) & enemyPieces) && (currentPawn & (~constants::FILE_A)))
+		if ((shift(currentPawn, 7, board.m_currentTurn) & enemyPieces) && (currentPawn & ((board.m_currentTurn == Board::white) ? ~constants::FILE_A : ~constants::FILE_H)))
 		{
 			if (shift(currentPawn, 7, board.m_currentTurn) & (constants::RANK_1 | constants::RANK_8))
 			{
@@ -77,7 +77,7 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			}
 		}
 
-		if ((shift(currentPawn, 9, board.m_currentTurn) & enemyPieces) && (currentPawn & (~constants::FILE_H)))
+		if ((shift(currentPawn, 9, board.m_currentTurn) & enemyPieces) && (currentPawn & ((board.m_currentTurn == Board::white) ? ~constants::FILE_H : ~constants::FILE_A)))
 		{
 			if (shift(currentPawn, 9, board.m_currentTurn) & (constants::RANK_1 | constants::RANK_8))
 			{

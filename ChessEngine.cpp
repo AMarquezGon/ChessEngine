@@ -22,23 +22,11 @@ std::list<Board> afterNMoves(Board board, int n, PositionCalculator& posCal)
 int main()
 {
     Board b{};
-    //b.m_pieces[Board::queen + Board::max_pieces] = 1ULL << 18;
-    //b.m_pieces[Board::pawn] = 1ULL << 50;
-    //b.m_pieces[Board::pawn + Board::max_pieces] = 1ULL << 36;
-    //b.m_enpassant = 1 << 4;
     b.display();
     PositionCalculator posCal{};
     std::cout << '\n';
-    //std::list<Board> possiblePositions{b.nextPossiblePositions()};
-    std::list<Board> possiblePositions{afterNMoves(b,3,posCal)};
+    std::list<Board> possiblePositions{afterNMoves(b,5,posCal)};
     int it{ 1 };
     std::cout << "Done. Total possible positions: " << possiblePositions.size() << '\n';
-    //for (const Board& board : possiblePositions)
-    //{
-    //    //std::cout << board.getCurrentTurn();
-    //    std::cout << "Board number " << it << '\n';
-    //    board.display();
-    //    ++it;
-    //    std::cout << "\n\n";
-    //}
+
 }
