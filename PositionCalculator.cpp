@@ -8,12 +8,12 @@ bool PositionCalculator::positionSeen(const Board& board)
 
 void PositionCalculator::addPosition(const Board& board, std::list<Board>& positions)
 {
-	if (positionSeen(board) || !isKingSafe(board))
+	if (!isKingSafe(board))
 	{
 		return;
 	}
 	positions.push_back(board);
-	m_transposedPositions.insert(board);
+
 }
 
 std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
@@ -63,6 +63,7 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 				for (std::size_t piece{ 1 }; piece < 5; ++piece)
 				{
 					Board newPosition{ board , 0 };
+					newPosition.eliminatePiece(shift(currentPawn, 7, board.m_currentTurn));
 					newPosition.m_pieces[Board::pawn + Board::max_pieces * board.m_currentTurn] &= (~currentPawn);
 					newPosition.m_pieces[piece + Board::max_pieces * board.m_currentTurn] |= shift(currentPawn, 7, board.m_currentTurn);
 					addPosition(newPosition, possiblePositions);
@@ -83,6 +84,7 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 				for (std::size_t piece{ 1 }; piece < 5; ++piece)
 				{
 					Board newPosition{ board , 0 };
+					newPosition.eliminatePiece(shift(currentPawn, 9, board.m_currentTurn));
 					newPosition.m_pieces[Board::pawn + Board::max_pieces * board.m_currentTurn] &= (~currentPawn);
 					newPosition.m_pieces[piece + Board::max_pieces * board.m_currentTurn] |= shift(currentPawn, 9, board.m_currentTurn);
 					addPosition(newPosition, possiblePositions);
@@ -90,7 +92,7 @@ std::list<Board> PositionCalculator::nextPossiblePositions(Board board)
 			}
 			else {
 				Board newPosition{ board , 0 };
-				newPosition.eliminatePiece(shift(currentPawn, 7, board.m_currentTurn));
+				newPosition.eliminatePiece(shift(currentPawn, 9, board.m_currentTurn));
 				newPosition.m_pieces[Board::pawn + Board::max_pieces * board.m_currentTurn] = (newPosition.m_pieces[Board::pawn + Board::max_pieces * board.m_currentTurn] & (~currentPawn)) | shift(currentPawn, 9, board.m_currentTurn);
 				addPosition(newPosition, possiblePositions);
 			}
