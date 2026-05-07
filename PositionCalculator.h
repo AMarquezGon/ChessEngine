@@ -2,7 +2,6 @@
 #include <unordered_set>
 #include "Board.h"
 
-
 struct KeyHash {
     std::size_t operator()(const Board& k) const noexcept {
         std::size_t h = 0;
@@ -32,6 +31,5 @@ public:
     std::list<Board> nextPossiblePositions(Board board);
     void addPosition(const Board& board, std::list<Board>& positions);
     bool positionSeen(const Board& board);
-    bool isKingSafe(const Board& board);
 };
 

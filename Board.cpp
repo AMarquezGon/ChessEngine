@@ -1,12 +1,11 @@
 #include "Board.h"
-#include "utility.h"
 
 using BitBoard = std::uint64_t;
 
 Board::Board()
 {
 	m_currentTurn = white;
-	m_castling = 3;
+	m_castling = 15;
 
 	m_pieces[pawn + max_pieces * white] = constants::RANK_2;
 	m_pieces[pawn + max_pieces * black] = constants::RANK_7;
